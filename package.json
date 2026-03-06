@@ -1,0 +1,30 @@
+{
+  "name": "nodejwt",
+  "version": "1.0.0",
+  "description": "this project help me to learn how jwt works and how public and private routes works",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/paulozombelacardoso/APINODEJWT.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/paulozombelacardoso/APINODEJWT/issues"
+  },
+  "homepage": "https://github.com/paulozombelacardoso/APINODEJWT#readme",
+  "dependencies": {
+    "@prisma/client": "6.19",
+    "bcrypt": "^6.0.0",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "prisma": "^6.19.0"
+  }
+}
