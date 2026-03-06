@@ -1,12 +1,15 @@
 import express from 'express';
 import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 const router = express.Router();
 
-//Cadastro
+const JWT_SECRET = process.env.JWT_SECRET;
 
+
+//Cadastro
 router.post('/cadastro', async (req, res) => {
     try {
         const user = req.body;
@@ -30,6 +33,45 @@ router.post('/cadastro', async (req, res) => {
     }
     catch (error) {
         console.error("Erro no /cadastro:", error);
+        res.status(500).json({ message: "Erro no servidor, tente novamente" });
+    }
+});
+
+// LOGIN (JWT => AUTENTICACAO)
+/* 
+    funcionamento 
+    O servidor verifica se as credenciais estão corretas na base de dados. Se forem válidas,
+    O servidor gera um JWT composto por três partes codificadas em Base64: 
+    Header: Indica o tipo de token e o algoritmo de criptografia (ex: HS256).
+    Payload: Contém os dados do utilizador (claims), como o ID ou o nome, e o tempo de expiração.
+    Signature: Uma assinatura digital criada com uma chave secreta guardada apenas no servidor. 
+    Esta assinatura garante que o token não foi alterado por terceiros. 
+*/
+
+router.post('/login' , async (req, res) =>
+{
+    try {
+        const userInfo = req.body;
+
+        // Busca user do banco de dados
+        const user = await prisma.user.findUnique({
+            where: {email: userInfo.email},
+        });
+
+        // verifica se o user esta dentro do banco de dados
+        if (!user)
+            res.status(404).json({message: "usuario nao encontrado!"});
+
+        // compara a senha do banco com a que o user digitou
+        const isMatch = await bcrypt.compare(userInfo.password, user.password);
+        if (!isMatch)
+            res.status(400).json({message: "Senha Invalida"}); 
+
+        // gerar o jwt (jsonwebtoken);
+        const token = jwt.sign({id: user.id}, JWT_SECRET, {expiresIn: '1m'});
+        res.status(200).json(token);
+    } catch (error) {
+        console.error("Erro no /login:", error);
         res.status(500).json({ message: "Erro no servidor, tente novamente" });
     }
 });
