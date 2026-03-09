@@ -60,16 +60,16 @@ router.post('/login' , async (req, res) =>
 
         // verifica se o user esta dentro do banco de dados
         if (!user)
-            res.status(404).json({message: "usuario nao encontrado!"});
+            return res.status(404).json({message: "usuario nao encontrado!"});
 
         // compara a senha do banco com a que o user digitou
         const isMatch = await bcrypt.compare(userInfo.password, user.password);
         if (!isMatch)
-            res.status(400).json({message: "Senha Invalida"}); 
+            return res.status(400).json({message: "Senha Invalida"}); 
 
         // gerar o jwt (jsonwebtoken);
-        const token = jwt.sign({id: user.id}, JWT_SECRET, {expiresIn: '1m'});
-        res.status(200).json(token);
+        const token = jwt.sign({id: user.id}, JWT_SECRET, {expiresIn: '1d'});
+        res.status(200).json({ token });
     } catch (error) {
         console.error("Erro no /login:", error);
         res.status(500).json({ message: "Erro no servidor, tente novamente" });
